@@ -1,0 +1,28 @@
+server:
+  port: 8084 # Port for Notification Service
+
+spring:
+  application:
+    name: notification-service
+  # RabbitMQ Connection Details
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: 5672
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
+# Custom properties matching the Order Service (Producer)
+rabbitmq:
+  queue:
+    name: order_queue
+  exchange:
+    name: order_exchange
+  routing:
+    key: order_routing_key
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}

@@ -1,0 +1,55 @@
+server:
+  port: 8080 # API Gateway will run on 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # User Service - Public Endpoints (e.g., login, register)
+        - id: user-service-public
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/**
+          # No AuthenticationFilter here, making it public
+
+        # User Service - Secured Endpoints
+        - id: user-service-secured
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - AuthenticationFilter # Applies our custom JWT validation filter
+
+        # Product Service - Secured
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - AuthenticationFilter
+
+        # Order Service - Secured
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - AuthenticationFilter
+
+        # Notification Service - Secured
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - AuthenticationFilter
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
